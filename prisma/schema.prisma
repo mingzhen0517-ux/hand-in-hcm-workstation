@@ -1,0 +1,113 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model FeatureItem {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  description String
+  category    String   // RECRUITMENT | TRAINING | PERFORMANCE | COMPENSATION | RELATIONS | ANALYTICS
+  status      String   // AUTOMATED | HIGH_EFFICIENCY | ON_THE_WAY
+  efficiency  String   // e.g. "提效 70%", "全流程无人值守"
+  roleTags    String   // JSON string of roles: ["RECRUITER", "HRBP", "SSC", "CB_SPECIALIST", "HRD"]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FeatureRequestLog {
+  id          String   @id @default(cuid())
+  featureCode String
+  userRole    String
+  feedback    String?
+  createdAt   DateTime @default(now())
+}
+
+model AutomationTask {
+  id             String    @id @default(cuid())
+  agentCode      String
+  title          String
+  status         String    @default("PENDING") // PENDING | RUNNING | SUCCESS | FAILED
+  progress       Int       @default(0) // 0 - 100
+  totalCount     Int       @default(0)
+  processedCount Int       @default(0)
+  successCount   Int       @default(0)
+  failedCount    Int       @default(0)
+  resultSummary  String?   // JSON summary
+  errorDetail    String?
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model NotificationConfig {
+  id            String   @id @default(cuid())
+  channel       String   @unique // SMTP | WEBHOOK
+  settingsJson  String   // Encrypted or JSON settings
+  isEnabled     Boolean  @default(true)
+  triggerEvents String   @default("COMPLETED,FAILED") // comma separated
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model NotificationLog {
+  id           String   @id @default(cuid())
+  taskId       String?
+  channel      String   // SMTP | WEBHOOK
+  recipient    String
+  title        String
+  content      String
+  status       String   // SENT | FAILED
+  errorMsg     String?
+  sentAt       DateTime @default(now())
+}
+
+model Candidate {
+  id             String             @id @default(cuid())
+  name           String
+  phone          String?
+  email          String?
+  positionApplied String?
+  yearsExp       Int?
+  skills         String?            // JSON or text
+  source         String?            @default("UPLOAD") // UPLOAD | API_SYNC
+  status         String             @default("NEW") // NEW | SCREENED | INTERVIEWING | OFFERED | REJECTED
+  resumeText     String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  evaluations    ResumeEvaluation[]
+}
+
+model ResumeEvaluation {
+  id               String    @id @default(cuid())
+  candidateId      String
+  candidate        Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  targetPosition   String
+  matchScore       Int       // 0 - 100
+  summary          String
+  strengths        String    // JSON array string
+  weaknesses       String    // JSON array string
+  recommendation   String    // RECOMMENDED | CONSIDER | NOT_RECOMMENDED
+  interviewQuestions String? // JSON array string
+  createdAt        DateTime  @default(now())
+}
+
+model DataSourceConfig {
+  id          String    @id @default(cuid())
+  name        String
+  sourceType  String    // FEISHU | DINGTALK | WECOM | MOCK_API | CSV_SYNC
+  endpointUrl String
+  authConfig  String?   // JSON headers/tokens
+  cronExpr    String?   @default("0 0 * * *")
+  lastSyncAt  DateTime?
+  status      String    @default("ACTIVE")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
