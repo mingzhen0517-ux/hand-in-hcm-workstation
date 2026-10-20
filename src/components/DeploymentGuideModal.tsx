@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Terminal, Copy, Check, ExternalLink, X, Laptop, Cloud, Key, Database } from "lucide-react";
+import { Copy, Check, ExternalLink, X, Laptop, Key } from "lucide-react";
 
 interface Props {
   isOpen: boolean;
@@ -74,7 +74,7 @@ export function DeploymentGuideModal({ isOpen, onClose }: Props) {
             <Key className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold">云端演示版与本地版区别：</span>
-              当前 Cloudflare Demo 运行在公共云端，出于安全防范对大模型调用做了保护或额度限流；本地部署只需配置您自己的 API Key，数据与生成完全属于您自己。
+              当前 Vercel Demo 运行在公共云端，出于安全防范对大模型调用做了保护或额度限流；本地部署只需配置您自己的 API Key，数据与生成完全属于您自己。
             </div>
           </div>
 
