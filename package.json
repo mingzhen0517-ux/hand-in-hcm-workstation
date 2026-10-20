@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "db:push": "prisma db push"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,8 @@
   },
   "homepage": "https://github.com/mingzhen0517-ux/hand-in-hcm-workstation#readme",
   "dependencies": {
+    "@libsql/client": "^0.8.1",
+    "@prisma/adapter-libsql": "^5.22.0",
     "@prisma/client": "^5.22.0",
     "@tailwindcss/postcss": "^4.3.3",
     "clsx": "^2.1.1",
